@@ -1,0 +1,28 @@
+===== [ History of fileset ART/13Z044-90/13Z044-90 ] =====
+
+
+-----[ Revision 1.4 ]-----
+[ 2011-04-14 17:47:19 by ts ]
+
+Updated underlaying MEN chameleon driver files
+Adapter driver package file structure to match linux drivers tree
+
+-----[ Revision 1.3 ]-----
+[ 2008-09-05 16:59:58 by ts ]
+
+ fb_men_16z044.c:
+  - add offset for DISP unit (was previously 0x0, in EM1N its 0x700)
+  - merged in changes from Sysgo
+
+-----[ Revision 1.2 ]-----
+[ 2007-01-10 20:26:50 by ts ]
+|
+*** CHANGED FILES ***
+File fb_men_16z044.c
+   API change: fb_ioctl Parameters changed
+   Cosmetics
+
+-----[ Revision 1.1 ]-----
+[ 2007-01-09 14:04:52 by ts ]
+Initial Revision
+

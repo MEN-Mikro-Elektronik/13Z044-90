@@ -1,0 +1,9 @@
+README for building the MEN 16Y044 framebuffer driver as a module for loading in a linux system
+
+1. copy the includes from INCLUDE/men/native/MEN and INCLUDE/men/com/MEN/ to your linux 
+
+2. compile the kernel module out of the kernel tree with:
+  make -C /lib/modules/$(uname -r)/build M=`pwd` modules 
+
+3. copy the build module to the kernel modules folder, e.g.:
+  sudo cp fb_men_16z044.ko /lib/modules/3.14.27-100.fc19.x86_64/misc/
