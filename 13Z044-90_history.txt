@@ -3,13 +3,11 @@
 
 -----[ Revision 1.4 ]-----
 [ 2011-04-14 17:47:19 by ts ]
-
 Updated underlaying MEN chameleon driver files
 Adapter driver package file structure to match linux drivers tree
 
 -----[ Revision 1.3 ]-----
 [ 2008-09-05 16:59:58 by ts ]
-
  fb_men_16z044.c:
   - add offset for DISP unit (was previously 0x0, in EM1N its 0x700)
   - merged in changes from Sysgo
