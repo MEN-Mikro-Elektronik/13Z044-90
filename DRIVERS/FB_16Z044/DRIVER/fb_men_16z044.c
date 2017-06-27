@@ -11,6 +11,7 @@
  * 		 640x400 800x600 1024x768 1280x1024 at fixed 16bpp.
  *		 The driver is supposed to be used together with the
  *		 men_chameleon subsystem.
+ *               Requires Linux kernel >= 2.6.16
  *
  *     Switches:
  */
@@ -97,14 +98,8 @@
 #include <MEN/men_chameleon.h>
 #include <MEN/16z044_disp.h>
 
-#define KERNEL_IS_26 (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
 
-#if KERNEL_IS_26
 # include <linux/device.h>
-#else
-# include <video/fbcon.h>
-# include <video/fbcon-cfb16.h>
-#endif
 
 /*-----------------------------+
  |  DEFINES                    |
@@ -146,41 +141,13 @@ struct PALETTE
     u16 blue, green, red, pad;
 };
 
-#if !(KERNEL_IS_26)
-static union
-{
-#ifdef FBCON_HAS_CFB16
-    u16 cfb16[16];
-#endif
-#ifdef FBCON_HAS_CFB24 /* currently not implemented */
-    u32 cfb24[16];
-#endif
-} fbcon_cmap;
-#endif
 
 /* set refresh rate (module parameter) */
 static unsigned int refresh;
 
 /* fb_ops */
-#if !(KERNEL_IS_26)
-static int men_16z044_get_fix(struct fb_fix_screeninfo *fix, int con,
-							  struct fb_info *info);
-static int men_16z044_get_var(struct fb_var_screeninfo *var, int con,
-							  struct fb_info *info);
-static int men_16z044_set_var(struct fb_var_screeninfo *var, int con,
-							  struct fb_info *info);
-static int men_16z044_get_cmap(struct fb_cmap *cmap, int kspc, int con,
-							   struct fb_info *info);
-static int men_16z044_set_cmap(struct fb_cmap *cmap, int kspc, int con,
-							   struct fb_info *info);
-#endif
-#if KERNEL_IS_26
 static int men_16z044_pan_display(struct fb_var_screeninfo *var,
 								  struct fb_info *info);
-#else
-static int men_16z044_pan_display(struct fb_var_screeninfo *var, int con,
-								  struct fb_info *info);
-#endif
 
 struct MEN_16Z044_FB
 {
@@ -213,14 +180,9 @@ struct MEN_16Z044_FB
     struct fb_var_screeninfo var;
     struct fb_info info;
 
-#if !(KERNEL_IS_26)
-    struct display disp;
-#endif
     char name[FBDRV_NAMELEN+1];
 
-#if KERNEL_IS_26
     struct platform_device fb_device;
-#endif
 
     struct pci_dev	*pdev;
 
@@ -242,9 +204,6 @@ static const struct RES_SET G_resol[]={
  |  GLOBALS                       |
  +--------------------------------*/
 
-#if !(KERNEL_IS_26)
-static int G_currcon 			= 0;
-#endif
 
 #ifdef MODULE
 /* module parameter for video refresh rate */
@@ -262,13 +221,8 @@ static unsigned int refresh=MEN_16Z044_REFRESH_60HZ;
  * \returns -
  */
 /* TODO: currently not supported */
-#if KERNEL_IS_26
 static int men_16z044_pan_display(struct fb_var_screeninfo *var,
 								  struct fb_info *info)
-#else
-    static int men_16z044_pan_display(struct fb_var_screeninfo *var, int con,
-									  struct fb_info *info)
-#endif
 {
     return 0;
 }
@@ -348,133 +302,6 @@ static int men_16z044_update_var(int con, struct fb_info *info)
 #endif
 
 
-#if !(KERNEL_IS_26)
-/**********************************************************************/
-/** provide fix screeninfo structure of framebuffer. called as
- *
- * \param \IN 	fix		fb_fix_screeninfo struct to provide to the kernel
- * \param \IN	con		console number
- * \param \IN   info	fb_info of the display
- *
- * \returns 	just 0 currently success
- */
-static int men_16z044_get_fix(struct fb_fix_screeninfo *fix,
-							  int con,
-							  struct fb_info *info)
-{
-
-    struct MEN_16Z044_FB *fbP=men_16z044_from_info(info);
-
-    if (!fbP)
-		return -ENODEV;
-
-    memset(fix, 0, sizeof(struct fb_fix_screeninfo));
-    memcpy(fix, &fbP->fix, sizeof(struct fb_fix_screeninfo ));
-    return 0;
-
-}
-
-
-
-/**********************************************************************/
-/** get variable screeninfo structure of framebuffer to the kernel
- *
- * \param \IN 	var		where to copy variable screeninfo
- * \param \IN	con		console number
- * \param \IN   info	fb_info of the display
- *
- * \returns 	just 0 currently success
- */
-static int men_16z044_get_var(struct fb_var_screeninfo *var,
-							  int con,
-							  struct fb_info *info)
-{
-
-    struct MEN_16Z044_FB *fbP=men_16z044_from_info(info);
-
-    if (!fbP)
-		return -ENODEV;
-
-    memset(var, 0, sizeof(struct fb_var_screeninfo));
-    memcpy(var, &fbP->var, sizeof( struct fb_var_screeninfo ));
-    return 0;
-
-}
-
-
-
-
-/**********************************************************************/
-/** set variable screeninfo structure of framebuffer to the kernel
- *
- * \param \IN 	var		where to copy variable screeninfo
- * \param \IN	con		console number
- * \param \IN   info	fb_info of the display
- *
- * \returns 	just 0 currently success
- */
-static int men_16z044_set_var(struct fb_var_screeninfo *var,
-							  int con,
-							  struct fb_info *info)
-{
-
-    if ((var->activate & FB_ACTIVATE_MASK) == FB_ACTIVATE_TEST)
-		return 0;
-
-    if (var->yoffset)
-		return -EINVAL;
-
-    return 0;
-}
-
-
-
-
-/***************************************************************************/
-/** get the framebuffers current color map.
- *
- * \param \IN 	regno	fb_fix_screeninfo struct
- * \param \IN	con		console number
- * \param \IN	red		where to store the red color part of color <regno>
- * \param \IN	green	where to store the green color part of color <regno>
- * \param \IN	blue	where to store the blue color part of color <regno>
- * \param \IN	transp  where to store the transparency Value (not used)
- * \param \IN   info	fb_info of the display
- *
- * \returns 	0 on success or errorcode
- */
-static int men_16z044_getcolreg(unsigned regno,
-								unsigned *red,
-								unsigned *green,
-								unsigned *blue,
-								unsigned *transp,
-								struct fb_info *fb_info)
-{
-    /*
-     *  Read a single color register and split it into colors/transparent.
-     *  Return != 0 for invalid regno.
-     */
-    struct MEN_16Z044_FB *fbP=NULL;
-
-    if (regno >= FB_16Z044_COLS)
-		return -EINVAL;
-
-    if(!red || !blue || !green || !transp)
-		return -EINVAL;
-
-    if (!fb_info)
-		return -EINVAL;
-
-    fbP = men_16z044_from_info(fb_info);
-
-    *red   = fbP->palette[regno].red;
-    *green = fbP->palette[regno].green;
-    *blue  = fbP->palette[regno].blue;
-    *transp = 0;
-
-    return 0;
-}
-#endif /* KERNEL_IS_26 */
 
 
 /***************************************************************************/
@@ -512,134 +339,16 @@ static int men_16z044_setcolreg(unsigned regno,
     fbP->palette[regno].blue  = blue;
 
     /* the 16z044 has just RGB565 built in for now*/
-#if KERNEL_IS_26
     ((u32*) (fb_info->pseudo_palette))[regno] =
 		((red   & 0xf800)      ) |
 		((green & 0xfc00) >>  5) |
 		((blue  & 0xf800) >> 11);
 
-#else
-    fbcon_cmap.cfb16[regno] = ((red & 0xf800)) |
-		((green & 0xfc00) >> 5)|((blue  & 0xf800) >> 11);
-#endif
 
     return 0;
 }
 
 
-#if !(KERNEL_IS_26)
-/***************************************************************************/
-/** install the framebuffers color map.
- *
- * \param \IN	con		console number
- *
- * \returns -
- */
-static void do_install_cmap(int con, struct fb_info *info)
-{
-
-
-    if (con != G_currcon)
-		return;
-
-    if (fb_display[con].cmap.len)
-		fb_set_cmap(&fb_display[con].cmap, 1, men_16z044_setcolreg, info);
-    else
-		fb_set_cmap( fb_default_cmap(FB_16Z044_COLS),
-					 1, men_16z044_setcolreg, info );
-
-
-}
-
-
-
-/***************************************************************************/
-/** copy the framebuffers color map to the current console
- *
- * \param \IN	cmap	where to copy the framebuffers cmap
- * \param \IN	kspc	keyboard specifier (?)
- * \param \IN	con		console number
- * \param \IN   info	fb_info struct of the display
- *
- * \returns 0
- */
-static int men_16z044_get_cmap(struct fb_cmap *cmap,
-							   int kspc,
-							   int con,
-							   struct fb_info *info)
-{
-
-    if (con == G_currcon) /* current console? */
-		return fb_get_cmap(cmap, kspc, men_16z044_getcolreg, info);
-    else if (fb_display[con].cmap.len) /* non default colormap? */
-		fb_copy_cmap(&fb_display[con].cmap, cmap, kspc ? 0 : 2);
-    else
-		fb_copy_cmap(fb_default_cmap(FB_16Z044_COLS),
-					 cmap, kspc ? 0 : 2);
-    return 0;
-}
-
-
-
-
-/***************************************************************************/
-/** copy the colormap to be used
- *
- * \param \IN	cmap	where to copy the framebuffers cmap
- * \param \IN	kspc	keyboard type specifier (?)
- * \param \IN	con		console number
- * \param \IN   info	fb_info struct of the display
- *
- * \returns 0
- */
-static int men_16z044_set_cmap(struct fb_cmap *cmap,
-							   int kspc,
-							   int con,
-							   struct fb_info *info)
-{
-
-    int err = 0;
-
-    if (!fb_display[con].cmap.len) {	/* no colormap allocated? */
-		err = fb_alloc_cmap(&fb_display[con].cmap,FB_16Z044_COLS,0);
-		if (err)
-			return err;
-    }
-
-    if (con == G_currcon)			/* current console? */
-		return fb_set_cmap(cmap, kspc, men_16z044_setcolreg, info);
-    else
-		fb_copy_cmap(cmap, &fb_display[con].cmap, kspc ? 0 : 1);
-
-    return 0;
-}
-
-
-
-/***************************************************************************/
-/** Console switching called by fbcon.c
- *
- * \param \IN	con		console number
- * \param \IN   info	fb_info struct of the display
- *
- * \returns 0
- */
-static int men_16z044_fbcon_switch(int con,
-								   struct fb_info *info)
-{
-    /* Do we have to save the colormap? */
-    if (fb_display[G_currcon].cmap.len)
-		fb_get_cmap(&fb_display[G_currcon].cmap,
-					1, men_16z044_getcolreg, info);
-
-    G_currcon = con;
-    /* Install new colormap */
-    do_install_cmap(con, info);
-
-    return 0;
-
-}
-#endif /* !(KERNEL_IS_26) */
 
 
 /***************************************************************************/
@@ -726,24 +435,6 @@ static void men_16z044_blank(int blank, struct fb_info *info)
 
 
 
-#if !(KERNEL_IS_26)
-/**********************************************************************/
-/** Update the `var' structure (called by fbcon.c)
- *
- *
- * \param \IN 	con		number of current console
- * \param \IN   info	pointer to fb_info struct
- *
- * \returns currently 0
- */
-static int men_16z044_updatevar(int con, struct fb_info *info)
-{
-
-    /* nothing ..yet*/
-    return 0;
-
-}
-#endif
 
 
 
@@ -947,30 +638,17 @@ static int men_16z044_FlatPanel( struct MEN_16Z044_FB *fbP, unsigned int en)
 
 
 /**********************************************************************/
-/** Support P018/P518 specific Hardware Functions via ioctls
+/** Support specific Hardware Functions via ioctls
  *
- * \param \IN 	inode
- * \param \IN 	file
+ * \param \IN 	info
  * \param \IN 	cmd
  * \param \IN 	arg
- * \param \IN 	con
  *
  * \returns Errorcode if error  or 0 on success
  */
-/* perform fb specific ioctl (optional) */
-#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,15))
 static int men_16z044_ioctl(struct fb_info *info,
 							unsigned int cmd,
 							unsigned long arg )
-#elif (LINUX_VERSION_CODE > KERNEL_VERSION(2,5,0))
-	static int men_16z044_ioctl( struct inode *inode, struct file *file,
-								 unsigned int cmd, unsigned long arg,
-								 struct fb_info *info)
-#elif  (LINUX_VERSION_CODE < KERNEL_VERSION(2,5,0))
-	static int men_16z044_ioctl(struct inode *inode, struct file *file,
-								unsigned int cmd, unsigned long arg, int con,
-								struct fb_info *info)
-#endif
 {
 
     struct MEN_16Z044_FB *fbP;
@@ -1029,7 +707,6 @@ static int men_16z044_ioctl(struct fb_info *info,
 
 
 
-#if KERNEL_IS_26
 extern int soft_cursor(struct fb_info *info, struct fb_cursor *cursor);
 static struct fb_ops men_16z044_ops = {
     .fb_setcolreg	= men_16z044_setcolreg,
@@ -1044,17 +721,6 @@ static struct fb_ops men_16z044_ops = {
     .fb_ioctl		= men_16z044_ioctl,
 
 };
-#else
-static struct fb_ops men_16z044_ops = {
-owner:			THIS_MODULE,
-fb_get_fix:		men_16z044_get_fix,
-fb_get_var:		men_16z044_get_var,
-fb_set_var:		men_16z044_set_var,
-fb_get_cmap:	men_16z044_get_cmap,
-fb_set_cmap:	men_16z044_set_cmap,
-fb_ioctl:		men_16z044_ioctl,
-};
-#endif
 
 /**********************************************************************/
 /** Init the Addresses and remapped Spaces of the FB
@@ -1107,9 +773,6 @@ static void men_16z044_InitVarFb( struct MEN_16Z044_FB *fbP )
     fbP->var.bits_per_pixel = 16;
     fbP->var.grayscale 		= 0;	/* != 0 Graylevels instead of colors */
     fbP->bytes_per_pixel 	= 2;
-#if !(KERNEL_IS_26)
-    fbP->line_length = fbP->var.xres * fbP->bytes_per_pixel;
-#endif
     switch (fbP->var.bits_per_pixel) {
     case 15:/* 32k */
     case 16:
@@ -1150,21 +813,11 @@ static void men_16z044_InitInfo( struct MEN_16Z044_FB *fbP )
 {
 
     /* ---  4. init  fb_info -- */
-#if KERNEL_IS_26
     fbP->info.var				= fbP->var;
     fbP->info.fix				= fbP->fix;
     fbP->info.screen_base		= fbP->sdram_virt;
     fbP->info.screen_size		= fbP->sdram_size;
     fbP->info.pseudo_palette	= fbP->palette;
-#else
-    strcpy(fbP->info.modename, fbP->name);
-    fbP->info.disp 				= &fbP->disp;
-    fbP->info.fontname[0] 		= '\0';
-    fbP->info.changevar 		= NULL;
-    fbP->info.switch_con 		= &men_16z044_fbcon_switch;
-    fbP->info.updatevar 		= &men_16z044_updatevar;
-    fbP->info.blank 			= &men_16z044_blank;
-#endif
 
     fbP->info.flags 			= FBINFO_FLAG_DEFAULT;
     fbP->info.fbops 			= &men_16z044_ops;
@@ -1203,27 +856,6 @@ static void men_16z044_InitFixFb( struct MEN_16Z044_FB *fbP )
 
 static void men_16z044_InitDisp( struct MEN_16Z044_FB *fbP )
 {
-
-#if !(KERNEL_IS_26)
-    fbP->disp.dispsw		 = &fbcon_cfb16;
-    fbP->disp.dispsw_data    = fbcon_cmap.cfb16;
-    fbP->disp.var            = fbP->var;
-    fbP->disp.cmap.start     = 0;
-    fbP->disp.cmap.len       = 0;
-    fbP->disp.cmap.red  	 = fbP->disp.cmap.green = \
-		fbP->disp.cmap.blue  = fbP->disp.cmap.transp = NULL;
-    fbP->disp.screen_base    = fbP->sdram_virt;
-    fbP->disp.visual         = fbP->fix.visual;
-    fbP->disp.type           = fbP->fix.type;
-    fbP->disp.type_aux       = fbP->fix.type_aux;
-    fbP->disp.ypanstep       = 0;
-    fbP->disp.ywrapstep      = 0;
-    fbP->disp.line_length    = fbP->fix.line_length;
-    fbP->disp.can_soft_blank = 1;
-    fbP->disp.inverse        = 0;
-    fbP->disp.scrollmode	 = fbP->var.accel_flags & FB_ACCELF_TEXT ? 0 : SCROLL_YREDRAW;
-
-#endif
 
 
 }
@@ -1461,9 +1093,7 @@ static int fb16z044_remove( CHAMELEONV2_UNIT_T *chu )
 
     if (info) {
 		unregister_framebuffer(info);
-#if KERNEL_IS_26
 		framebuffer_release(info);
-#endif
 		iounmap(fbP->sdram_virt );
 		iounmap(fbP->dispctr_virt);
 		kfree(fbP);
@@ -1526,11 +1156,7 @@ MODULE_LICENSE("GPL");
 MODULE_AUTHOR("thomas.schnuerer@men.de");
 MODULE_DESCRIPTION("MEN 16z044 Framebuffer driver");
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,0)
-MODULE_PARM( refresh ,"i");
-#else
 module_param( refresh, uint, 0 );
-#endif
 
 MODULE_PARM_DESC(refresh, "refresh rate in Hz: refresh=[60 or 75] ");
 
