@@ -284,26 +284,6 @@ static struct MEN_16Z044_FB *men_16z044_from_info( struct fb_info *infoP )
 }
 
 
-/**********************************************************************/
-/** provide variable screeninfo structure of framebuffer
- *
- * \param \IN	con		console switch
- * \param \IN   info	fb_info struct currently used
- *
- * \returns -EIO if error  or 0 on success
- */
-#if 0 /* not supported yet */
-static int men_16z044_update_var(int con, struct fb_info *info)
-{
-    /* does panning , therefore not supported */
-    return 0;
-
-}
-#endif
-
-
-
-
 /***************************************************************************/
 /** get the framebuffers current color map.
  *
@@ -535,42 +515,6 @@ static int men_16z044_GetResolution( struct MEN_16Z044_FB *fbP)
 
 }
 
-
-
-/**********************************************************************/
-/**  Set the Resolution to one of the 4 possible values.
- *
- * \param \IN 	fbP 	pointer to struct of 16z044 data
- * \param \IN 	res 	0: 640x480 1:800x600 2:1024x768 3:1280x1024
- *
- * \returns 0 if success / negative errorcode on error
- */
-#if 0  /* not yet supported */
-static int men_16z044_SetResolution( struct MEN_16Z044_FB *fbP,
-									 unsigned int res)
-{
-
-    unsigned int ctrl=0,check=0;
-
-    if ( !fbP || res > MEN_16Z044_RES_1280 )
-		return -EINVAL;
-
-    ctrl = readl( fb_men_16z044_DispCtrlBase(fbP) );
-    ctrl = (ctrl & 0xfffffffc)| res;
-
-    /* set bit31 to let changes take effect */
-    ctrl |= Z044_DISP_CTRL_CHANGE;
-
-    writel( ctrl, fb_men_16z044_DispCtrlBase(fbP));
-
-    /* thats wrong (yet) anyway because a different
-       FPGA content must be loaded which is a more complicated process */
-
-    /* let new Resolution 'settle' */
-    return 0;
-
-}
-#endif
 
 /**********************************************************************/
 /**  Set byte swapping of the 16bpp value according to architecture
@@ -854,11 +798,6 @@ static void men_16z044_InitFixFb( struct MEN_16Z044_FB *fbP )
 
 
 
-static void men_16z044_InitDisp( struct MEN_16Z044_FB *fbP )
-{
-
-
-}
 
 
 /**********************************************************************/
@@ -925,7 +864,6 @@ static unsigned int men_16z044_InitDevData(struct MEN_16Z044_FB *fbP,
     /* Initialize all needed Structs for the Framebuffer subsystem */
     men_16z044_InitFixFb( fbP );
     men_16z044_InitVarFb( fbP );
-    men_16z044_InitDisp( fbP );
     men_16z044_InitInfo( fbP );
     DPRINTK("finally unblank screen, setup initial swap/refresh Values\n");
 
