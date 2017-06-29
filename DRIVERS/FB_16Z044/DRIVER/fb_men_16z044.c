@@ -98,7 +98,6 @@
 #include <MEN/men_chameleon.h>
 #include <MEN/16z044_disp.h>
 
-
 #include <linux/device.h>
 
 /*-----------------------------+
@@ -140,7 +139,6 @@ struct PALETTE
 {
 	u16 blue, green, red, pad;
 };
-
 
 /* set refresh rate (module parameter) */
 static unsigned int refresh;
@@ -188,7 +186,6 @@ struct MEN_16Z044_FB
 
 	unsigned int barSdram;
 	unsigned int barDisp;
-
 };
 
 /* currently possible resolutions (fixed into FPGA unit)*/
@@ -203,8 +200,6 @@ static const struct RES_SET G_resol[] = {
 /*--------------------------------+
  |  GLOBALS                       |
  +--------------------------------*/
-
-
 #ifdef MODULE
 /* module parameter for video refresh rate */
 static unsigned int refresh = MEN_16Z044_REFRESH_60HZ;
@@ -227,8 +222,6 @@ static int men_16z044_pan_display(struct fb_var_screeninfo *var,
 	return 0;
 }
 
-
-
 /**********************************************************************/
 /** provide offset address of the controll registers
  *
@@ -243,7 +236,6 @@ static void *fb_men_16z044_FrmOffsetReg(struct MEN_16Z044_FB *fbP)
 {
 	return (void*)(fbP->dispctr_virt + Z044_DISP_FOFFS);
 }
-
 
 /**********************************************************************/
 /** provide virtual base address of the display controller
@@ -263,7 +255,6 @@ static void *fb_men_16z044_DispCtrlBase(struct MEN_16Z044_FB *fbP)
 	return p;
 }
 
-
 /**********************************************************************/
 /** return the MEN_16Z044_FB struct associated with this info struct
  *
@@ -280,9 +271,7 @@ static struct MEN_16Z044_FB *men_16z044_from_info(struct fb_info *infoP)
 	}
 
 	return (struct MEN_16Z044_FB *)(infoP->par);
-
 }
-
 
 /***************************************************************************/
 /** get the framebuffers current color map.
@@ -303,33 +292,26 @@ static int men_16z044_setcolreg(unsigned regno,
 				unsigned transp,
 				struct fb_info *fb_info)
 {
-
 	struct MEN_16Z044_FB *fbP = NULL;
 
 	if (regno >= FB_16Z044_COLS)
 		return 1;
 
 	fbP = men_16z044_from_info(fb_info);
-
 	if (!fbP)
 		return -ENODEV;
 
 	fbP->palette[regno].red   = red;
 	fbP->palette[regno].green = green;
 	fbP->palette[regno].blue  = blue;
-
 	/* the 16z044 has just RGB565 built in for now*/
 	((u32*) (fb_info->pseudo_palette))[regno] =
 		((red   & 0xf800)      ) |
 		((green & 0xfc00) >>  5) |
 		((blue  & 0xf800) >> 11);
 
-
 	return 0;
 }
-
-
-
 
 /***************************************************************************/
 /** select the number of the Screen to display in intern FB memory
@@ -361,13 +343,8 @@ static int men_16z044_SetScreen(struct MEN_16Z044_FB *fbP, unsigned int nr)
 
 	writel(nr * fbP->xres * fbP->yres * fbP->bytes_per_pixel,
 			fb_men_16z044_FrmOffsetReg(fbP));
-
 	return 0;
 }
-
-
-
-
 
 /**********************************************************************/
 /** blanking / unblanking the screen
@@ -392,13 +369,12 @@ static int men_16z044_SetScreen(struct MEN_16Z044_FB *fbP, unsigned int nr)
  */
 static void men_16z044_blank(int blank, struct fb_info *info)
 {
-
 	unsigned int ctrl = 0;
-
 	struct MEN_16Z044_FB *fbP = men_16z044_from_info(info);
 
 	if (!fbP)
 		return;
+
 	ctrl = readl(fb_men_16z044_DispCtrlBase(fbP));
 
 	if (!!blank)
@@ -409,16 +385,7 @@ static void men_16z044_blank(int blank, struct fb_info *info)
 	/* bit31 must be set to '1' too to let changes take effect. */
 	ctrl |= Z044_DISP_CTRL_CHANGE;
 	writel(ctrl, fb_men_16z044_DispCtrlBase(fbP));
-
 }
-
-
-
-
-
-
-
-
 
 /**********************************************************************/
 /** enable/disable the P018 Testpattern (a colored frame at the    edges
@@ -449,7 +416,6 @@ static int men_16z044_EnableTestMode(struct MEN_16Z044_FB *fbP,
 	return 0;
 }
 
-
 /**********************************************************************/
 /** Switch the refresh rate between 60 Hz and 75Hz. (currently) only
  *  these Values are supported in the 16z044.
@@ -463,14 +429,12 @@ static int men_16z044_EnableTestMode(struct MEN_16Z044_FB *fbP,
 static int men_16z044_SetRefreshRate(struct MEN_16Z044_FB *fbP,
 					unsigned int rate)
 {
-
 	unsigned int ctrl = 0;
 
 	if (!fbP)
 		return -EINVAL;
 
 	ctrl = readl(fb_men_16z044_DispCtrlBase(fbP));
-
 	switch (rate) {
 	case MEN_16Z044_REFRESH_75HZ:
 		DPRINTK("setting 75 Hz\n");
@@ -483,15 +447,11 @@ static int men_16z044_SetRefreshRate(struct MEN_16Z044_FB *fbP,
 	default:
 		return -EINVAL;
 	}
-
 	ctrl |= Z044_DISP_CTRL_CHANGE;
-
 	writel(ctrl, fb_men_16z044_DispCtrlBase(fbP));
 
 	return 0;
-
 }
-
 
 /**********************************************************************/
 /**  Readout the current Resolution thats set in HW
@@ -503,7 +463,6 @@ static int men_16z044_SetRefreshRate(struct MEN_16Z044_FB *fbP,
  */
 static int men_16z044_GetResolution(struct MEN_16Z044_FB *fbP)
 {
-
 	unsigned int res = 0;
 	if (!fbP)
 		return -EINVAL;
@@ -512,9 +471,7 @@ static int men_16z044_GetResolution(struct MEN_16Z044_FB *fbP)
 	printk(KERN_INFO "16Z044 found. Resolution: %d x %d\n",
 			G_resol[res].xres, G_resol[res].yres);
 	return res;
-
 }
-
 
 /**********************************************************************/
 /**  Set byte swapping of the 16bpp value according to architecture
@@ -526,7 +483,6 @@ static int men_16z044_GetResolution(struct MEN_16Z044_FB *fbP)
  */
 static int men_16z044_ByteSwap(struct MEN_16Z044_FB *fbP, unsigned int en)
 {
-
 	unsigned int ctrl = 0;
 	DPRINTK("men_16z044_ByteSwap: en = %d\n", en);
 
@@ -534,19 +490,15 @@ static int men_16z044_ByteSwap(struct MEN_16Z044_FB *fbP, unsigned int en)
 		return -EINVAL;
 
 	ctrl = readl(fb_men_16z044_DispCtrlBase(fbP));
-
 	/* set to 0 first */
 	ctrl &= ~Z044_DISP_CTRL_BYTESWAP;
-
 	if (!!en)
 		ctrl |= Z044_DISP_CTRL_BYTESWAP;
-
 	writel(ctrl, fb_men_16z044_DispCtrlBase(fbP));
 
 	return 0;
 
 }
-
 
 /**********************************************************************/
 /**  Switch flat panel on / off
@@ -558,28 +510,20 @@ static int men_16z044_ByteSwap(struct MEN_16Z044_FB *fbP, unsigned int en)
  */
 static int men_16z044_FlatPanel(struct MEN_16Z044_FB *fbP, unsigned int en)
 {
-
 	unsigned int ctrl = 0;
 
 	if (!fbP)
 		return -EINVAL;
 
 	ctrl = readl(fb_men_16z044_DispCtrlBase(fbP) + MEN_16Z044_FP_CTRL);
-
 	/* set to 0 first */
 	ctrl &= ~(0x7);
-
 	if (!!en)
 		ctrl |= (0x7);
-
 	writel(ctrl, fb_men_16z044_DispCtrlBase(fbP) + MEN_16Z044_FP_CTRL);
 
 	return 0;
-
 }
-
-
-
 
 /**********************************************************************/
 /** Support specific Hardware Functions via ioctls
@@ -594,13 +538,11 @@ static int men_16z044_ioctl(struct fb_info *info,
 					unsigned int cmd,
 					unsigned long arg)
 {
-
 	struct MEN_16Z044_FB *fbP;
 	unsigned int scrnr;
 
 	fbP = men_16z044_from_info(info);
 	scrnr = 0;
-
 	if (!fbP)
 		return -EINVAL;
 
@@ -649,8 +591,6 @@ static int men_16z044_ioctl(struct fb_info *info,
 	}
 }
 
-
-
 extern int soft_cursor(struct fb_info *info, struct fb_cursor *cursor);
 static struct fb_ops men_16z044_ops = {
 	.fb_setcolreg   = men_16z044_setcolreg,
@@ -663,7 +603,6 @@ static struct fb_ops men_16z044_ops = {
 #endif /*CONFIG_FRAMEBUFFER_CONSOLE*/
 	/* perform fb specific ioctl (optional) */
 	.fb_ioctl       = men_16z044_ioctl,
-
 };
 
 /**********************************************************************/
@@ -675,8 +614,6 @@ static struct fb_ops men_16z044_ops = {
  */
 static unsigned int men_16z044_MapAdresses(struct MEN_16Z044_FB *fbP)
 {
-
-
 	/*------------------------------+
 	 | map 16Z043_SDRAM unit        |
 	 +------------------------------*/
@@ -702,16 +639,11 @@ static unsigned int men_16z044_MapAdresses(struct MEN_16Z044_FB *fbP)
 				__FUNCTION__);
 		return -ENOMEM;
 	}
-
-
-
 	return 0;
 }
 
-
 static void men_16z044_InitVarFb(struct MEN_16Z044_FB *fbP)
 {
-
 	fbP->var.xres           = fbP->var.xres_virtual = fbP->xres;
 	fbP->var.yres           = fbP->var.yres_virtual = fbP->yres ;
 	fbP->var.bits_per_pixel = 16;
@@ -749,13 +681,10 @@ static void men_16z044_InitVarFb(struct MEN_16Z044_FB *fbP)
 	fbP->var.vsync_len    = 0;     /* length of vertical sync             */
 	fbP->var.sync         = 0;     /* see FB_SYNC_*                       */
 	fbP->var.vmode        = FB_VMODE_NONINTERLACED;  /* see FB_VMODE_*    */
-
 }
-
 
 static void men_16z044_InitInfo(struct MEN_16Z044_FB *fbP)
 {
-
 	/* ---  4. init  fb_info -- */
 	fbP->info.var            = fbP->var;
 	fbP->info.fix            = fbP->fix;
@@ -769,16 +698,10 @@ static void men_16z044_InitInfo(struct MEN_16Z044_FB *fbP)
 	/* store address of 'this' 16z044  */
 	fbP->info.par            = (void*)fbP;
 	DPRINTK("&fbP->info.par = %p\n", fbP->info.par);
-
-
 }
-
-
-
 
 static void men_16z044_InitFixFb(struct MEN_16Z044_FB *fbP)
 {
-
 	/* struct fb_fix_screeninfo didnt change in 2.6 */
 	strcpy(fbP->fix.id, fbP->name);     /* ident string (char[16]) */
 	fbP->fix.type        = FB_TYPE_PACKED_PIXELS; /* see FB_TYPE_* */
@@ -793,12 +716,7 @@ static void men_16z044_InitFixFb(struct MEN_16Z044_FB *fbP)
 	fbP->fix.mmio_start  = fbP->mmio_start;
 	fbP->fix.mmio_len    = fbP->mmio_len;
 	fbP->fix.accel       = 0;
-
 }
-
-
-
-
 
 /**********************************************************************/
 /** Init all structs contained in the main 16z044 struct
@@ -811,8 +729,6 @@ static void men_16z044_InitFixFb(struct MEN_16Z044_FB *fbP)
 static unsigned int men_16z044_InitDevData(struct MEN_16Z044_FB *fbP,
                                            unsigned int instCount)
 {
-
-
 	unsigned int res = 0, i = 0;
 
 #ifdef CONFIG_PPC /* TODO: might need to be refined in future ?*/
@@ -882,9 +798,7 @@ static unsigned int men_16z044_InitDevData(struct MEN_16Z044_FB *fbP,
 	men_16z044_FlatPanel(fbP, 1);
 
 	return 0;
-
 }
-
 
 /**********************************************************************/
 /** allocate one Element of the linked list and return it.
@@ -897,7 +811,6 @@ static unsigned int men_16z044_InitDevData(struct MEN_16Z044_FB *fbP,
  */
 static struct MEN_16Z044_FB *men_16z044_AllocateDevice(void)
 {
-
 	struct MEN_16Z044_FB *newP = NULL;
 
 	newP = (struct MEN_16Z044_FB*)(kmalloc(sizeof(struct MEN_16Z044_FB),
@@ -908,9 +821,7 @@ static struct MEN_16Z044_FB *men_16z044_AllocateDevice(void)
 	memset(newP, 0, sizeof(struct MEN_16Z044_FB));
 
 	return newP;
-
 }
-
 
 /***************************************************************************/
 /** setup and options processing function
@@ -921,9 +832,7 @@ static struct MEN_16Z044_FB *men_16z044_AllocateDevice(void)
  */
 int __init men_16z044_setup(char *options)
 {
-
 	char *this_opt;
-
 
 	DPRINTK(" *** %s options: '%s'\n", __FUNCTION__, options);
 
@@ -938,8 +847,6 @@ int __init men_16z044_setup(char *options)
 	return 0;
 }
 
-
-
 /*******************************************************************/
 /** PNP function for Framebuffer
  *
@@ -950,7 +857,6 @@ int __init men_16z044_setup(char *options)
  */
 static int __init fb16z044_probe(CHAMELEONV2_UNIT_T *chu)
 {
-
 	struct MEN_16Z044_FB *drvDataP = NULL;
 	unsigned int cnt = 0, barSdram, barDisp, d_offs = 0;
 	struct pci_dev *chamDev = NULL;
@@ -967,7 +873,6 @@ static int __init fb16z044_probe(CHAMELEONV2_UNIT_T *chu)
 	 +------------------------*/
 
 	memset(&u, 0, sizeof(CHAMELEONV2_UNIT_T));
-
 	do {
 		if (men_chameleonV2_unit_find(43, i++, &u)) {
 			printk(KERN_ERR "*** %s: cant find associated Z043 SDRAM.\n",
@@ -977,11 +882,9 @@ static int __init fb16z044_probe(CHAMELEONV2_UNIT_T *chu)
 	} while (chu->unitFpga.group != u.unitFpga.group
 				|| chu->pdev->devfn != u.pdev->devfn
 				|| chu->pdev->bus->number != u.pdev->bus->number);
-
 	DPRINTK("%s: found CHAMELEON_16Z043_SDRAM.\n", MEN_FB_NAME);
 
 	barSdram = u.unitFpga.bar;
-
 	/*------------------------------+
 	 | alloc space for one FB device|
 	 +------------------------------*/
@@ -994,7 +897,6 @@ static int __init fb16z044_probe(CHAMELEONV2_UNIT_T *chu)
 	drvDataP->barSdram  = barSdram;
 	drvDataP->barDisp   = barDisp;
 	drvDataP->disp_offs = d_offs;
-
 	DPRINTK("barSdram=%d barDisp=%d offset disp= %04x\n",
 			barSdram, barDisp, d_offs);
 
@@ -1009,8 +911,6 @@ static int __init fb16z044_probe(CHAMELEONV2_UNIT_T *chu)
 	return 0;
 }
 
-
-
 /**********************************************************************/
 /** Framebuffer driver deregistration from men_chameleon subsystem
  *
@@ -1020,7 +920,6 @@ static int __init fb16z044_probe(CHAMELEONV2_UNIT_T *chu)
  */
 static int fb16z044_remove(CHAMELEONV2_UNIT_T *chu )
 {
-
 	struct MEN_16Z044_FB *fbP = (struct MEN_16Z044_FB *)(chu->driver_data);
 	struct fb_info *info = &fbP->info;
 
@@ -1042,18 +941,14 @@ static int fb16z044_remove(CHAMELEONV2_UNIT_T *chu )
 	return 0;
 }
 
-
-
 static const u16 G_devIdArr[] = { 44,
 					  CHAMELEONV2_DEVID_END };
-
 static CHAMELEONV2_DRIVER_T G_driver = {
 	.name     = "fb16z044",
 	.devIdArr = G_devIdArr,
 	.probe    = fb16z044_probe,
 	.remove   = fb16z044_remove
 };
-
 
 /**********************************************************************/
 /** Framebuffer driver registration / initialization at men_chameleon
@@ -1074,7 +969,6 @@ int __init men_16z044_init(void)
 
 	return men_chameleonV2_register_driver(&G_driver ) ? 0 : -ENODEV;
 }
-
 
 /**********************************************************************/
 /** modularized cleanup function
