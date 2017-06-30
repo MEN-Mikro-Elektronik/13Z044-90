@@ -91,6 +91,7 @@
 #include <linux/console.h>
 #include <linux/selection.h>        /* default_colors    */
 #include <linux/init.h>
+#include <linux/device.h>
 #include <linux/platform_device.h>
 #include <asm/io.h>
 #include <asm/uaccess.h>            /* copy_to/from_user */
@@ -98,7 +99,6 @@
 #include <MEN/men_chameleon.h>
 #include <MEN/16z044_disp.h>
 
-#include <linux/device.h>
 
 /*-----------------------------+
  |  DEFINES                    |
@@ -285,12 +285,9 @@ static struct MEN_16Z044_FB *men_16z044_from_info(struct fb_info *infoP)
  *
  * \returns    0 on success or errorcode
  */
-static int men_16z044_setcolreg(unsigned regno,
-				unsigned red,
-				unsigned green,
-				unsigned blue,
-				unsigned transp,
-				struct fb_info *fb_info)
+static int men_16z044_setcolreg(unsigned regno, unsigned red, unsigned green,
+                                unsigned blue, unsigned transp,
+                                struct fb_info *fb_info)
 {
 	struct MEN_16Z044_FB *fbP = NULL;
 
@@ -396,8 +393,7 @@ static void men_16z044_blank(int blank, struct fb_info *info)
  *
  * \returns  if success / negative errorcode on error
  */
-static int men_16z044_EnableTestMode(struct MEN_16Z044_FB *fbP,
-					unsigned int en)
+static int men_16z044_EnableTestMode(struct MEN_16Z044_FB *fbP, unsigned int en)
 {
 	unsigned int ctrl = 0;
 	if (!fbP)
@@ -426,8 +422,7 @@ static int men_16z044_EnableTestMode(struct MEN_16Z044_FB *fbP,
  *
  * \returns 0 if success / negative errorcode on error
  */
-static int men_16z044_SetRefreshRate(struct MEN_16Z044_FB *fbP,
-					unsigned int rate)
+static int men_16z044_SetRefreshRate(struct MEN_16Z044_FB *fbP, unsigned int rate)
 {
 	unsigned int ctrl = 0;
 
@@ -534,15 +529,12 @@ static int men_16z044_FlatPanel(struct MEN_16Z044_FB *fbP, unsigned int en)
  *
  * \returns Errorcode if error  or 0 on success
  */
-static int men_16z044_ioctl(struct fb_info *info,
-					unsigned int cmd,
-					unsigned long arg)
+static int men_16z044_ioctl(struct fb_info *info, unsigned int cmd, unsigned long arg)
 {
 	struct MEN_16Z044_FB *fbP;
-	unsigned int scrnr;
+	unsigned int scrnr = 0;
 
 	fbP = men_16z044_from_info(info);
-	scrnr = 0;
 	if (!fbP)
 		return -EINVAL;
 
@@ -620,10 +612,10 @@ static unsigned int men_16z044_MapAdresses(struct MEN_16Z044_FB *fbP)
 	fbP->sdram_phys  = pci_resource_start(fbP->pdev, fbP->barSdram);
 	fbP->sdram_size  = pci_resource_len(fbP->pdev, fbP->barSdram);
 	fbP->sdram_virt  = ioremap(fbP->sdram_phys, fbP->sdram_size);
-	DPRINTK("fbP->sdram_phys=0x%08x ->sdram_size=0x%08x ->sdram_virt=%p\n",
-			fbP->sdram_phys, fbP->sdram_size,fbP->sdram_virt);
 	fbP->mmio_start  = fbP->sdram_phys; /* needed in fb subsystem */
 	fbP->mmio_len    = fbP->sdram_size;
+	DPRINTK("fbP->sdram_phys=0x%08x ->sdram_size=0x%08x ->sdram_virt=%p\n",
+			fbP->sdram_phys, fbP->sdram_size,fbP->sdram_virt);
 
 	/*------------------------------+
 	 | map 16Z044_DISP unit         |
@@ -884,7 +876,6 @@ static int __init fb16z044_probe(CHAMELEONV2_UNIT_T *chu)
 				|| chu->pdev->bus->number != u.pdev->bus->number);
 	DPRINTK("%s: found CHAMELEON_16Z043_SDRAM.\n", MEN_FB_NAME);
 
-	barSdram = u.unitFpga.bar;
 	/*------------------------------+
 	 | alloc space for one FB device|
 	 +------------------------------*/
@@ -893,6 +884,7 @@ static int __init fb16z044_probe(CHAMELEONV2_UNIT_T *chu)
 		return -ENOMEM;
 	}
 
+	barSdram = u.unitFpga.bar;
 	drvDataP->pdev      = chamDev;
 	drvDataP->barSdram  = barSdram;
 	drvDataP->barDisp   = barDisp;
@@ -941,8 +933,7 @@ static int fb16z044_remove(CHAMELEONV2_UNIT_T *chu )
 	return 0;
 }
 
-static const u16 G_devIdArr[] = { 44,
-					  CHAMELEONV2_DEVID_END };
+static const u16 G_devIdArr[] = { 44, CHAMELEONV2_DEVID_END };
 static CHAMELEONV2_DRIVER_T G_driver = {
 	.name     = "fb16z044",
 	.devIdArr = G_devIdArr,
