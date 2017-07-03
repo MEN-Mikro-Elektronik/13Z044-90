@@ -842,38 +842,28 @@ int __init men_16z044_setup(char *options)
 /*******************************************************************/
 /** PNP function for Framebuffer
  *
- * \param chu    \IN data of found unit, passed by chameleon driver
+ * \param fb_unit \IN data of found unit, passed by chameleon driver
  *
  * \return 0 on success or negative linux error number
- *
  */
-static int __init fb16z044_probe(CHAMELEONV2_UNIT_T *chu)
+static int __init fb16z044_probe(CHAMELEONV2_UNIT_T *fb_unit)
 {
 	struct MEN_16Z044_FB *drvDataP = NULL;
-	unsigned int cnt = 0, barSdram, barDisp, d_offs = 0;
-	struct pci_dev *chamDev = NULL;
-	CHAMELEONV2_UNIT_T u;
+	CHAMELEONV2_UNIT_T ram_unit;
 	int i = 0;
-
-	/* store the DISP data */
-	barDisp = chu->unitFpga.bar;
-	chamDev = chu->pdev;
-	d_offs  = chu->unitFpga.offset;
 
 	/*-------------------------+
 	 | find our SDRAM in FPGA  |
 	 +------------------------*/
-
-	memset(&u, 0, sizeof(CHAMELEONV2_UNIT_T));
 	do {
-		if (men_chameleonV2_unit_find(43, i++, &u)) {
+		if (men_chameleonV2_unit_find(43, i++, &ram_unit)) {
 			printk(KERN_ERR "*** %s: cant find associated Z043 SDRAM.\n",
 					MEN_FB_NAME);
 			return -ENODEV;
 		}
-	} while (chu->unitFpga.group != u.unitFpga.group
-				|| chu->pdev->devfn != u.pdev->devfn
-				|| chu->pdev->bus->number != u.pdev->bus->number);
+	} while (fb_unit->unitFpga.group != ram_unit.unitFpga.group
+				|| fb_unit->pdev->devfn != ram_unit.pdev->devfn
+				|| fb_unit->pdev->bus->number != ram_unit.pdev->bus->number);
 	DPRINTK("%s: found CHAMELEON_16Z043_SDRAM.\n", MEN_FB_NAME);
 
 	/*------------------------------+
@@ -884,21 +874,20 @@ static int __init fb16z044_probe(CHAMELEONV2_UNIT_T *chu)
 		return -ENOMEM;
 	}
 
-	barSdram = u.unitFpga.bar;
-	drvDataP->pdev      = chamDev;
-	drvDataP->barSdram  = barSdram;
-	drvDataP->barDisp   = barDisp;
-	drvDataP->disp_offs = d_offs;
+	drvDataP->pdev      = fb_unit->pdev;
+	drvDataP->barSdram  = ram_unit.unitFpga.bar;
+	drvDataP->barDisp   = fb_unit->unitFpga.bar;
+	drvDataP->disp_offs = fb_unit->unitFpga.offset;
 	DPRINTK("barSdram=%d barDisp=%d offset disp= %04x\n",
-			barSdram, barDisp, d_offs);
+			ram_unit.unitFpga.bar, fb_unit->unitFpga.bar, fb_unit->unitFpga.offset);
 
-	if (men_16z044_InitDevData(drvDataP, cnt))
+	if (men_16z044_InitDevData(drvDataP, 0))
 		return -ENOMEM;
 
 	if (register_framebuffer(&drvDataP->info) < 0)
 		return -EINVAL;
 
-	chu->driver_data = drvDataP; /* chu = DISP unit here for later remove() */
+	fb_unit->driver_data = drvDataP; /* fb_unit = DISP unit here for later remove() */
 
 	return 0;
 }
