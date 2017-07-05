@@ -93,6 +93,7 @@
 #include <linux/init.h>
 #include <linux/device.h>
 #include <linux/platform_device.h>
+#include <linux/delay.h>
 #include <asm/io.h>
 #include <asm/uaccess.h>            /* copy_to/from_user */
 #include <MEN/fb_men_16z044.h>      /* public ioctls    */
@@ -850,21 +851,39 @@ static int __init fb16z044_probe(CHAMELEONV2_UNIT_T *fb_unit)
 {
 	struct MEN_16Z044_FB *drvDataP = NULL;
 	CHAMELEONV2_UNIT_T ram_unit;
-	int i = 0;
+	int ram_ids[] = {43, 24}; /* keep both ram_* arrays at same lenght */
+	char *ram_names[] = {"Z043 SDRAM", "Z024 SRAM"};
+	int r = 0; /* index of ram type */
+	int i = 0; /* index of ram device entry in chameleon table */
+	int error = -ENODEV;
+	char *ram_found = NULL;
+
+	DPRINTK(KERN_INFO "fb16z044_probe: fb_fpga_group=%d fb_fpga_devId=0x%02x\n",
+	        fb_unit->unitFpga.group, fb_unit->unitFpga.devId );
 
 	/*-------------------------+
 	 | find our SDRAM in FPGA  |
 	 +------------------------*/
-	do {
-		if (men_chameleonV2_unit_find(43, i++, &ram_unit)) {
-			printk(KERN_ERR "*** %s: cant find associated Z043 SDRAM.\n",
-					MEN_FB_NAME);
-			return -ENODEV;
-		}
-	} while (fb_unit->unitFpga.group != ram_unit.unitFpga.group
-				|| fb_unit->pdev->devfn != ram_unit.pdev->devfn
-				|| fb_unit->pdev->bus->number != ram_unit.pdev->bus->number);
-	DPRINTK("%s: found CHAMELEON_16Z043_SDRAM.\n", MEN_FB_NAME);
+	for (r = 0; r < sizeof(ram_ids) / sizeof(ram_ids[0]); r++) {
+		for (i = 0; i < 256; i++) {
+			error = men_chameleonV2_unit_find(ram_ids[r], i, &ram_unit);
+			if (error)
+				break; /* no more devices of this type */
+			if (  fb_unit->unitFpga.group    == ram_unit.unitFpga.group
+			   && fb_unit->pdev->devfn       == ram_unit.pdev->devfn
+			   && fb_unit->pdev->bus->number == ram_unit.pdev->bus->number) {
+				ram_found = ram_names[r];
+				break;
+			}
+		} /* loop count usually very low, < 2 maybe 3 */
+		if (ram_found)
+			break;
+	}
+	if (error) {
+		printk(KERN_ERR "*** %s: cannot find ram device.\n", MEN_FB_NAME);
+		return error; /* -ENODEV */
+	}
+	DPRINTK("%s: found %s.\n", MEN_FB_NAME, ram_found);
 
 	/*------------------------------+
 	 | alloc space for one FB device|
