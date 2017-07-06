@@ -1,0 +1,52 @@
+###
+### BEFORE YOU START
+###
+##############################################################################
+When ever  you are going to change some parts on an existing configuration or
+source tree (which is not already version controlled) it is very helpful to do
+    git init; git add ,; git -ci -m 'still unchanged tree'
+And then commit your changes frequently with REALLY EXPLANATORY commit
+messages. This will help you to remember later (maybe a half year or more).
+Also everybody else will love you forever, because he can better understand
+what you did, when he has to continue your work.
+AND YES, YOU HAVE THE TIME!!! You saved it already in that other project,
+where one of your colleagues already documented his work in an understandable
+way. Remember: WE are a team. Let a git help you.
+##############################################################################
+
+How to build this driver
+------------------------
+
+1) in MDIS source tree
+Let's assume that:
+- you already have cloned this repo in REPODIR (e.g. /home/code/13z044-90/)
+- MDIS is installed in MDISDIR (e.g. /opt/menlinux/)
+
+Now do that (after you have put MDISDIR under git control):
+    ln -vsf ${REPODIR}/DRIVERS/FB_16Z044/DRIVER/fb_men_16z044.c ${MDISDIR}/DRIVERS/FB_16Z044/DRIVER/fb_men_16z044.c
+    ln -vsf ${REPODIR}/INCLUDE/NATIVE/MEN/fb_men_16z044.h ${MDISDIR}/INCLUDE/NATIVE/MEN/fb_men_16z044.h
+    ln -vsf ${REPODIR}/PACKAGE_DESC/13z04490.xml ${MDISDIR}/PACKAGE_DESC/13z04490.xml
+    ln -vsf ${REPODIR}/13Z044-90_history.txt ${MDISDIR}/13Z044-90_history.txt
+    ln -vsf ${REPODIR}/13Z044-90_tree.txt ${MDISDIR}/13Z044-90_tree.txt
+For the test tools:
+    ln -vsf ${REPODIR}/TOOLS/FB_TEST/fb16z044_test.c ${MDISDIR}/TOOLS/FB_TEST/fb16z044_test.c
+    ln -vsf ${REPODIR}/TOOLS/FB_TEST/program.mak ${MDISDIR}/TOOLS/FB_TEST/program.mak
+
+Let's further assume MDIS is already configured, then just assure that
+the MIDS main Makefile variable 'ALL_NATIVE_DRIVERS' contains
+'DRIVERS/FB_16Z044/DRIVER/driver.mak'
+
+Now build MDIS as usual.
+
+2) as kernel off tree module
+   - to be done -
+
+
+How to build the tools
+----------------------
+Read the sections above and assure you have the links in 'TOOLS/'
+Then add this to your main MDIS Makefile:
+ALL_NATIVE_TOOLS = TOOLS/FB_TEST/program.mak
+
+Now build MDIS as usual.
+
