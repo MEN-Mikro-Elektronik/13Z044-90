@@ -31,6 +31,10 @@ Now do that (after you have put MDISDIR under git control):
 For the test tools:
     ln -vsf ${REPODIR}/TOOLS/FB_TEST/fb16z044_test.c ${MDISDIR}/TOOLS/FB_TEST/fb16z044_test.c
     ln -vsf ${REPODIR}/TOOLS/FB_TEST/program.mak ${MDISDIR}/TOOLS/FB_TEST/program.mak
+    mkdir -p ${MDISDIR}/TOOLS/FB_TEST/fb16z044_256x64_test
+    ln -vsf ${REPODIR}/TOOLS/FB_TEST/fb16z044_256x64_test/fb16z044_256x64_test.c ${MDISDIR}/TOOLS/FB_TEST/fb16z044_256x64_test/fb16z044_256x64_test.c
+    ln -vsf ${REPODIR}/TOOLS/FB_TEST/fb16z044_256x64_test/logos.h ${MDISDIR}/TOOLS/FB_TEST/fb16z044_256x64_test/logos.h
+    ln -vsf ${REPODIR}/TOOLS/FB_TEST/fb16z044_256x64_test/program.mak ${MDISDIR}/TOOLS/FB_TEST/fb16z044_256x64_test/program.mak
 
 Let's further assume MDIS is already configured, then just assure that
 the MIDS main Makefile variable 'ALL_NATIVE_DRIVERS' contains
@@ -46,7 +50,10 @@ How to build the tools
 ----------------------
 Read the sections above and assure you have the links in 'TOOLS/'
 Then add this to your main MDIS Makefile:
-ALL_NATIVE_TOOLS = TOOLS/FB_TEST/program.mak
+
+ALL_NATIVE_TOOLS = \
+	TOOLS/FB_TEST/program.mak \
+	TOOLS/FB_TEST/fb16z044_256x64_test/program.mak
 
 Now build MDIS as usual.
 
