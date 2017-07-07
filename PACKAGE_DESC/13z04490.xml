@@ -13,7 +13,8 @@
 			<devtype>NATIVE</devtype>
 			<busif>ChameleonBus</busif>
             <autoid>
-                <chamunitid>0x07</chamunitid>
+                <chamunitid>0x25</chamunitid>
+                <chamv2id>0x2c</chamv2id>
             </autoid>
 			<settinglist>
 				<debugsetting desc="false" drv="false" mk="false" oss="false"/>
