@@ -40,13 +40,13 @@
 			<name>Z044_Test</name>
 			<description>Control Z044 settings</description>
 			<type>Native Tool</type>
-			<makefilepath>TOOLS/FB_TEST/program.mak</makefilepath>
+			<makefilepath>DRIVERS/FB_16Z044/TOOLS/Z44_IOCTL_TEST/program.mak</makefilepath>
 		</swmodule>
 		<swmodule>
 			<name>Z044_256x64_Test</name>
 			<description>Set various images to 256x64 display</description>
 			<type>Native Tool</type>
-			<makefilepath>TOOLS/FB_TEST/fb16z044_256x64_test/program.mak</makefilepath>
+			<makefilepath>DRIVERS/FB_16Z044/TOOLS/Z44_256X64_TEST/program.mak</makefilepath>
 		</swmodule>
 	</swmodulelist>
 </package>
