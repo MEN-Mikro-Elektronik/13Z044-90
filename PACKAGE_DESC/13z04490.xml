@@ -1,40 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="packagedesc.xsd">
-	<name>13z02590</name>
+	<name>13z04490</name>
 	<description>Linux native framebuffer driver package for MEN 16Z044 IP core</description>
 	<date>2016-10-20</date>
 	<revision>1.5</revision>
-    <docroot>DRIVERS/13Z025/DOC/html/index.html</docroot>
+	<docroot></docroot>
 	<modellist>
-    	    <model>
+		<model>
 			<hwname>16Z044_FB</hwname>
 			<description>Framebuffer in Chameleon FPGA</description>
 			<devnameprefix>FB</devnameprefix>
 			<devtype>NATIVE</devtype>
 			<busif>ChameleonBus</busif>
-            <autoid>
-                <chamunitid>0x25</chamunitid>
-                <chamv2id>0x2c</chamv2id>
-            </autoid>
+			<autoid>
+				<chamunitid>0x25</chamunitid>
+				<chamv2id>0x2c</chamv2id>
+			</autoid>
 			<settinglist>
 				<debugsetting desc="false" drv="false" mk="false" oss="false"/>
 			</settinglist>
-			<swmodulelist>
-				<swmodule>
-					<name>men_lx_z44</name>
-					<description>Linux framebuffer driver for 16Z044</description>
-					<type>Native Driver</type>
-					<makefilepath>DRIVERS/FB_16Z044/DRIVER/driver.mak</makefilepath>
-                    		<os>Linux</os>
-				</swmodule>
-				<swmodule>
-					<name>men_lx_chameleon</name>
-					<description>Linux native chameleon driver</description>
-					<type>Native Driver</type>
-					<makefilepath>DRIVERS/CHAMELEON/driver.mak</makefilepath>
-                    		<os>Linux</os>
-				</swmodule>
-			</swmodulelist>
 		</model>
 	</modellist>
+	<swmodulelist>
+		<swmodule>
+			<name>men_lx_z44</name>
+			<description>Linux framebuffer driver for 16Z044</description>
+			<type>Native Driver</type>
+			<makefilepath>DRIVERS/FB_16Z044/DRIVER/driver.mak</makefilepath>
+			<os>Linux</os>
+		</swmodule>
+		<swmodule>
+			<name>men_lx_chameleon</name>
+			<description>Linux native chameleon driver</description>
+			<type>Native Driver</type>
+			<makefilepath>DRIVERS/CHAMELEON/driver.mak</makefilepath>
+			<os>Linux</os>
+		</swmodule>
+		<swmodule>
+			<name>Z044_Test</name>
+			<description>Control Z044 settings</description>
+			<type>Native Tool</type>
+			<makefilepath>TOOLS/FB_TEST/program.mak</makefilepath>
+		</swmodule>
+		<swmodule>
+			<name>Z044_256x64_Test</name>
+			<description>Set various images to 256x64 display</description>
+			<type>Native Tool</type>
+			<makefilepath>TOOLS/FB_TEST/fb16z044_256x64_test/program.mak</makefilepath>
+		</swmodule>
+	</swmodulelist>
 </package>
