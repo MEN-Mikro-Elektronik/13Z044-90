@@ -191,7 +191,7 @@ int main(int argc, char **argv)
 {
 	int fb_devnode_fd;
 	unsigned long screensize;
-	int retval;
+	int retval = 0;
 	char *buffer;
 
 	extern char *optarg;
