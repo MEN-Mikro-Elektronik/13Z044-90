@@ -81,6 +81,7 @@
  *---------------------------------------------------------------------------
  * (c) Copyright 2008 by MEN Mikro Elektronik GmbH, Nuremberg, Germany
  ****************************************************************************/
+#include <linux/version.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/errno.h>
@@ -92,7 +93,11 @@
 #include <linux/init.h>
 #include <linux/platform_device.h>
 #include <asm/io.h>
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,12,0)
 #include <asm/uaccess.h> 			/* copy_to/from_user */
+#else
+#include <linux/uaccess.h> 			/* copy_to/from_user */
+#endif
 #include <MEN/fb_men_16z044.h>		/* public ioctls 	*/
 #include <MEN/men_chameleon.h>
 #include <MEN/16z044_disp.h>
@@ -1501,8 +1506,9 @@ int __init men_16z044_init(void)
 	 * make sure the chameleon driver list contains 16Z044_DISP and SDRAM.
 	 * otherwise we cant become the system console that gets boot messages.
 	 */
-
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,15,0)
     printk("16z044 framebuffer driver built %s at %s.\n", __DATE__ ,__TIME__ );
+#endif
 
     return men_chameleonV2_register_driver( &G_driver ) ? 0 : -ENODEV;
 }
