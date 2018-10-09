@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="packagedesc.xsd">
-	<name>13z02590</name>
+	<name>13z04490</name>
 	<description>Linux native framebuffer driver package for MEN 16Z044 IP core</description>
 	<date>2016-10-20</date>
 	<revision>1.5</revision>
-    <docroot>DRIVERS/13Z025/DOC/html/index.html</docroot>
 	<modellist>
     	    <model>
 			<hwname>16Z044_FB</hwname>
