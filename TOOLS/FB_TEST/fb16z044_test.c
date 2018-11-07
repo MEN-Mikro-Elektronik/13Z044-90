@@ -14,19 +14,7 @@
  *     Switches: -
  *
  */
-/*-------------------------------[ History ]---------------------------------
- * $Log: fb16z044_test.c,v $
- * Revision 1.4  2007/01/08 19:21:14  ts
- * Bugfix: check mmap return value
- *
- * Revision 1.3  2006/05/24 10:29:20  ts
- * re-inserted ioctls for Byte swapping
- *
- * Revision 1.2  2005/08/17 16:12:37  ts
- * Cosmetics
- *
- * Revision 1.1  2005/07/16 13:04:21  ts
- * Initial Revision
+/*
  *---------------------------------------------------------------------------
  * (c) Copyright 2003-2004 by MEN Mikro Elektronik GmbH, Nuremberg, Germany
  ****************************************************************************/

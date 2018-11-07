@@ -14,70 +14,7 @@
  *
  *     Switches:
  */
-/*-------------------------------[ History ]---------------------------------
- *
- * $Log: fb_men_16z044.c,v $
- * Revision 1.8  2010/01/27 20:10:01  rt
- * R: 1) Linux may freeze at start-up if more than one Z043 SDRAM
- *       controller is in the system.
- * M: 1) Use only associated SDRAM controller (check chameleon group
- *       and PCI device).
- *
- * Revision 1.7  2009/02/24 16:54:21  ts
- * R: 1) driver did unnecessary seek in probe routine for DISP unit
- *    2) Resolution information should be available for new MEN BSP
- * M: 1) removed chameleon find call for 16Z044, probe routine is already
- *    called with this units informations
- *    2) added printk with resolution info for customers
- *
- * Revision 1.6  2008/12/01 17:34:07  rt
- * R:1. Wrong colours at display.
- *   2. Not compilable with Kernel 2.6.24
- * M:1.a) Comment of ByteSwap function changed according to 16z044 manual.
- *     b) Parameter at ByteSwap function calls changed.
- *   2. Added compiler switches.
- *
- * Revision 1.5  2008/09/05 15:02:58  ts
- * R: 1.) driver in ElinOS 4.2 was not up to date
- *    2.) changes from Sysgo differed to locat repository
- * M: 1.) officially fixed base offset problem and sent to Sysgo
- *    2.) merged in changes done by Sysgo
- *
- * Revision 1.4  2008/02/21 12:04:10  ts
- * fixed: - add offset for DISP unit (was previously 0x0, in EM1N its 0x700)
- *        - merged in changes from Sysgo
- *
- * Revision 1.3  2007/11/22 11:14:51  jal
- * pr#1852-elinos
- *
- * Now serial driver uses SA_SHIRQ
- * Fixed the device node name to be /dev/ttFPGAs/x
- *
- * There was also a problem with the frame buffer support which does not
- * compile. This was because a macro (KERNEL_IS_26) was not defined
- * anymore. I hjave not this defined.
- *
- * I also have added 2 new options in elk :
- * - Enable GPIO
- * - Enable FPGA serial
- *
- * Revision 1.2  2006/05/03 13:01:09  alm
- * Fix missing include.
- * Fixed compiler warning to do with ANSI C90
- *
- * Revision 1.1.1.1  2006/04/19 12:06:50  acs
- * First version of MEN EM1/PP01 BSP merge.
- * PR#935-elinos
- *
- * Revision 1.1.1.1  2006/02/24 11:33:18  acs
- * Added support for 2.6.15
- *
- * Revision 1.1.1.1  2005/09/13 12:25:37  pon
- * Initial import of MEN EM1
- *
- * Revision 1.1  2005/07/26 15:55:08  ts
- * Initial Revision
- *
+/*
  *---------------------------------------------------------------------------
  * (c) Copyright 2008 by MEN Mikro Elektronik GmbH, Nuremberg, Germany
  ****************************************************************************/
