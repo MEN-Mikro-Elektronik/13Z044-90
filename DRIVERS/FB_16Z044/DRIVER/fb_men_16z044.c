@@ -974,7 +974,7 @@ static int men_16z044_ioctl(struct fb_info *info,
 		return 0;
 
     case FBIO_MEN_16Z044_SET_SCREEN:
-		copy_from_user( (void*)&scrnr, (void*)arg, sizeof(scrnr));
+		if( copy_from_user( (void*)&scrnr, (void*)arg, sizeof(scrnr)) );
 		DPRINTK("ioctl FBIO_MEN_16Z044_SET_SCREEN. nr: %d\n", scrnr);
 		return men_16z044_SetScreen(fbP, scrnr);
 
@@ -1457,9 +1457,7 @@ int __init men_16z044_init(void)
 	 * make sure the chameleon driver list contains 16Z044_DISP and SDRAM.
 	 * otherwise we cant become the system console that gets boot messages.
 	 */
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4,15,0)
-    printk("16z044 framebuffer driver built %s at %s.\n", __DATE__ ,__TIME__ );
-#endif
+    printk("16z044 framebuffer driver built.\n");
 
     return men_chameleonV2_register_driver( &G_driver ) ? 0 : -ENODEV;
 }
