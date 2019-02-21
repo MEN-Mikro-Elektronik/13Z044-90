@@ -4,11 +4,8 @@
 #  
 #    Description: makefile descriptor for framebuffer driver
 #                      
-#---------------------------------[ History ]---------------------------------
-#
-#
 #-----------------------------------------------------------------------------
-#   (c) Copyright MEN mikro elektronik GmbH, Nuernberg, Germany 
+#   Copyright (c) 2019, MEN Mikro Elektronik GmbH
 #*****************************************************************************
 
 MAK_NAME=lx_z44

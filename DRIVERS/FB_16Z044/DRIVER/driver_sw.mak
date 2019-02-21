@@ -6,11 +6,8 @@
 #  
 #    Description: makefile descriptor for swapped 16Z025 Module
 #                      
-#---------------------------------[ History ]---------------------------------
-#
-#
 #-----------------------------------------------------------------------------
-#   (c) Copyright 2007 by MEN mikro elektronik GmbH, Nuremberg, Germany 
+#   Copyright (c) 2007-2019, MEN Mikro Elektronik GmbH
 #*****************************************************************************
 
 MAK_NAME=lx_z44_sw
