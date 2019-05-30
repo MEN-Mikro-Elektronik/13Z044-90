@@ -5,15 +5,15 @@
 	<date>2016-10-20</date>
 	<revision>1.5</revision>
 	<modellist>
-    	    <model>
+		<model>
 			<hwname>16Z044_FB</hwname>
 			<description>Framebuffer in Chameleon FPGA</description>
 			<devnameprefix>FB</devnameprefix>
 			<devtype>NATIVE</devtype>
 			<busif>ChameleonBus</busif>
-            <autoid>
-                <chamunitid>0x07</chamunitid>
-            </autoid>
+			<autoid>
+				<chamunitid>0x07</chamunitid>
+			</autoid>
 			<settinglist>
 				<debugsetting desc="false" drv="false" mk="false" oss="false"/>
 			</settinglist>
@@ -23,14 +23,14 @@
 					<description>Linux framebuffer driver for 16Z044</description>
 					<type>Native Driver</type>
 					<makefilepath>DRIVERS/FB_16Z044/DRIVER/driver.mak</makefilepath>
-                    		<os>Linux</os>
+					<os>Linux</os>
 				</swmodule>
 				<swmodule>
 					<name>men_lx_chameleon</name>
 					<description>Linux native chameleon driver</description>
 					<type>Native Driver</type>
 					<makefilepath>DRIVERS/CHAMELEON/driver.mak</makefilepath>
-                    		<os>Linux</os>
+					<os>Linux</os>
 				</swmodule>
 			</swmodulelist>
 		</model>
