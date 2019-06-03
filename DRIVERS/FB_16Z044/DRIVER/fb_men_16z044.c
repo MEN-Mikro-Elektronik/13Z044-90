@@ -3,8 +3,6 @@
  *        \file  fb_men_16z044.c
  *
  *      \author  thomas.schnuerer@men.de
- *        $Date: 2010/01/27 20:10:01 $
- *    $Revision: 1.8 $
  *
  *  	 \brief  Framebuffer driver for FPGAs containg a 16z044 unit.
  * 		 Supported modes:

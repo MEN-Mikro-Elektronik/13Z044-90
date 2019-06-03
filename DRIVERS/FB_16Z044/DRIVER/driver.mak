@@ -21,6 +21,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 MAK_NAME=lx_z44
+# the next line is updated during the MDIS installation
+STAMPED_REVISION="13Z044-90_01_07-2-g89e85d8-dirty_2019-05-30"
+
+DEF_REVISION=MAK_REVISION=$(STAMPED_REVISION)
+MAK_SWITCH=$(SW_PREFIX)$(DEF_REVISION)
 
 MAK_LIBS=
 

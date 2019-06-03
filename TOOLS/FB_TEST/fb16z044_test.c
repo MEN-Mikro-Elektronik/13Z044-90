@@ -3,8 +3,6 @@
  *        \file  fb16z044_test.c
  *
  *      \author  thomas.schnuerer@men.de
- *        $Date: 2007/01/08 19:21:14 $
- *    $Revision: 1.4 $
  * 
  *  	 \brief  Simple usermode Testprogram to enable and disable
  * 				 16z044 special ioctls and display a base set of colors.

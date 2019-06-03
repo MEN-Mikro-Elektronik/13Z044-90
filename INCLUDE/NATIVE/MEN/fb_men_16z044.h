@@ -3,8 +3,6 @@
  *        \file  fb_men_16z044.h
  *
  *      \author  thomas.schnuerer@men.de
- *        $Date: 2007/01/08 17:43:21 $
- *    $Revision: 2.1 $
  * 
  *  	 \brief  Framebuffer driver for MEN 16z044 fb unit, first Version.
  * 				 Supported modes:
