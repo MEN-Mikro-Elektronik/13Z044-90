@@ -2,8 +2,8 @@
 <package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="packagedesc.xsd">
 	<name>13z04490</name>
 	<description>Linux native framebuffer driver package for MEN 16Z044 IP core</description>
-	<date>2016-10-20</date>
-	<revision>1.5</revision>
+	<date>2019-06-07</date>
+	<revision>13Z044-90_01_07-4-gdf09a87</revision>
 	<modellist>
 		<model>
 			<hwname>16Z044_FB</hwname>
