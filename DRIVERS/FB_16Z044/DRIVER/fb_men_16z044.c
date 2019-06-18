@@ -1478,6 +1478,7 @@ __setup( "fb16z044_mode=", men_16z044_setup);
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("thomas.schnuerer@men.de");
 MODULE_DESCRIPTION("MEN 16z044 Framebuffer driver");
+MODULE_VERSION(MENT_XSTR(MAK_REVISION));
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,0)
 MODULE_PARM( refresh ,"i");
