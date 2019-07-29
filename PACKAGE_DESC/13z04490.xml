@@ -13,6 +13,7 @@
 			<busif>ChameleonBus</busif>
 			<autoid>
 				<chamunitid>0x07</chamunitid>
+				<chamv2id>44</chamv2id>
 			</autoid>
 			<settinglist>
 				<debugsetting desc="false" drv="false" mk="false" oss="false"/>
