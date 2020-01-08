@@ -39,7 +39,7 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 #include <linux/fb.h>		/* VSCREENINFO */
-#include <linux/fb_men_16z044.h>
+#include "../../INCLUDE/NATIVE/MEN/fb_men_16z044.h"
 
 static int gencolors(int fdes);
 
@@ -130,8 +130,6 @@ int main(int argc, char *argv[])
 static int gencolors(int fdes ) 
 {
 	unsigned int line=0, col=0;
-	int fd = 0;
-	int fbnum = 0;
 
 	struct fb_var_screeninfo screeninfo;
 	unsigned int index = 0;
