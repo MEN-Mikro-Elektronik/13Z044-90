@@ -1,9 +1,8 @@
 #**************************  M a k e f i l e ********************************
 #  
 #         Author: ts
-#  
+#
 #    Description: makefile descriptor for framebuffer driver
-#                      
 #-----------------------------------------------------------------------------
 #   Copyright 2019, MEN Mikro Elektronik GmbH
 #*****************************************************************************
@@ -22,7 +21,7 @@
 
 MAK_NAME=lx_z44
 # the next line is updated during the MDIS installation
-STAMPED_REVISION="13Z044-90_01_07-2-g89e85d8-dirty_2019-05-30"
+STAMPED_REVISION="13Z044-90_01_08-18-g6ebc5a9_2020-01-08"
 
 DEF_REVISION=MAK_REVISION=$(STAMPED_REVISION)
 
