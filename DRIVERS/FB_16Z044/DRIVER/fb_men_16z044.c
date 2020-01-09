@@ -529,8 +529,9 @@ static int men_16z044_ioctl(struct fb_info *info, unsigned int cmd, unsigned lon
 		return 0;
 
 	case FBIO_MEN_16Z044_SET_SCREEN:
-		copy_from_user((void*)&scrnr, (void*)arg, sizeof(scrnr));
-
+		if(copy_from_user((void*)&scrnr, (void*)arg, sizeof(scrnr))){
+			printk(KERN_ERR "*** error: copy_from_user _SET_SCREEN \n");
+		}
 		DPRINTK("ioctl FBIO_MEN_16Z044_SET_SCREEN. nr: %d\n", scrnr);
 		return men_16z044_SetScreen(fbP, scrnr);
 
