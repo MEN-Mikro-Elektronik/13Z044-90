@@ -160,11 +160,11 @@ static int display_logos(int fd, char *buffer, unsigned long size, int delay,
 	for (i = 0; i < iterations; i++) {
 		if (display_write(fd, buffer, size, NULL, 0x0, delay, "all 0x0"))
 			return 1;
-		if (display_write(fd, buffer, size, sie_logo, 0, delay, "Siemens logo"))
+		if (display_write(fd, buffer, size, test_logo, 0, delay, "T E S T"))
 			return 1;
 		if (display_write(fd, buffer, size, rect_logo, 0, delay, "rectangle"))
 			return 1;
-		if (display_write(fd, buffer, size, men_logo, 0, delay, "MEN logo"))
+		if (display_write(fd, buffer, size, hello_logo, 0, delay, "Hello!"))
 			return 1;
 		if (display_write(fd, buffer, size, NULL, 0xFF, delay, "all 0xFF"))
 			return 1;
@@ -338,11 +338,11 @@ static int display_mmap(char *mem, unsigned long size, const char *image,
 	for (i = 0; i < iterations; i++) {
 		if (display_mmap(fb_memory, screensize, NULL, 0x0, delay, "all 0x0"))
 			break;
-		if (display_mmap(fb_memory, screensize, sie_logo, 0, delay, "Siemens logo"))
+		if (display_mmap(fb_memory, screensize, test_logo, 0, delay, "T E S T"))
 			break;
 		if (display_mmap(fb_memory, screensize, rect_logo, 0, delay, "rectangle"))
 			break;
-		if (display_mmap(fb_memory, screensize, men_logo, 0, delay, "MEN logo"))
+		if (display_mmap(fb_memory, screensize, hello_logo, 0, delay, "Hello!"))
 			break;
 		if (display_mmap(fb_memory, screensize, NULL, 0xFF, delay, "all 0xFF"))
 			break;
