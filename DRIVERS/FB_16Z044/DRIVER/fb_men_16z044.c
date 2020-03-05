@@ -898,7 +898,7 @@ static int fb16z044_remove(CHAMELEONV2_UNIT_T *chu )
 }
 
 static const u16 G_devIdArr[] = { 44, CHAMELEONV2_DEVID_END };
-static CHAMELEONV2_DRIVER_T G_driver = {
+static CHAMELEONV2_DRIVER_T __refdata G_driver = {
 	.name     = "fb16z044",
 	.devIdArr = G_devIdArr,
 	.probe    = fb16z044_probe,
