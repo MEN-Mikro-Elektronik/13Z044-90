@@ -5,7 +5,7 @@
 #    Description: makefile descriptor for swapped 16Z025 Module
 #                      
 #-----------------------------------------------------------------------------
-#   Copyright 2007-2019, MEN Mikro Elektronik GmbH
+#   Copyright 2007-2020, MEN Mikro Elektronik GmbH
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

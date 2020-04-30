@@ -1,7 +1,7 @@
 #**************************  M a k e f i l e ********************************
 #   Description: makefile for framebuffer fb16z044_256x64_test
 #-----------------------------------------------------------------------------
-#   Copyright 2019, MEN Mikro Elektronik GmbH
+#   Copyright 2020, MEN Mikro Elektronik GmbH
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

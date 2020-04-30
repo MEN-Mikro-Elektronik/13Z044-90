@@ -5,7 +5,7 @@
  * Author: Christian.Zoz@men.de
  * This tool is based on work from J. Thumshirn found on a SNY-OBS image
  *
- * Copyright 2003-2019, MEN Mikro Elektronik GmbH
+ * Copyright 2003-2020, MEN Mikro Elektronik GmbH
  ****************************************************************************/
 
  /*
