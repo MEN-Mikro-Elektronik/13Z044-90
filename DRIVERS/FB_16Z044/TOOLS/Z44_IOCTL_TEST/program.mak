@@ -1,11 +1,7 @@
 #**************************  M a k e f i l e ********************************
-#  
-#         Author: ts
-#  
-#    Description: makefile descriptor for swapped 16Z025 Module
-#                      
+#   Description: makefile for framebuffer fb16z044_test
 #-----------------------------------------------------------------------------
-#   Copyright 2007-2020, MEN Mikro Elektronik GmbH
+#   Copyright 2020, MEN Mikro Elektronik GmbH
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,21 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-MAK_NAME=lx_z44_sw
+MAK_NAME=fb16z044_test
 # the next line is updated during the MDIS installation
 STAMPED_REVISION="13Z044-90_01_08-18-g6ebc5a9_2020-01-08"
 
 DEF_REVISION=MAK_REVISION=$(STAMPED_REVISION)
-
-MAK_LIBS=
-
-MAK_SWITCH=$(SW_PREFIX)MAC_MEM_MAPPED \
-		$(SW_PREFIX)$(DEF_REVISION) \
-		$(SW_PREFIX)MAC_BYTESWAP
-
-MAK_INCL=$(MEN_INC_DIR)/../../NATIVE/MEN/men_chameleon.h 
-
-MAK_INP1=fb_men_16z044$(INP_SUFFIX)
-
+MAK_SWITCH=$(SW_PREFIX)$(DEF_REVISION)
+MAK_INCL=$(MEN_LIN_DIR)/INCLUDE/NATIVE/MEN/fb_men_16z044.h
+MAK_INP1=fb16z044_test$(INP_SUFFIX)
 MAK_INP=$(MAK_INP1)
-

@@ -12,28 +12,40 @@
 			<devtype>NATIVE</devtype>
 			<busif>ChameleonBus</busif>
 			<autoid>
-				<chamunitid>0x07</chamunitid>
+				<chamunitid>0x25</chamunitid>
 				<chamv2id>44</chamv2id>
 			</autoid>
 			<settinglist>
 				<debugsetting desc="false" drv="false" mk="false" oss="false"/>
 			</settinglist>
-			<swmodulelist>
-				<swmodule>
-					<name>men_lx_z44</name>
-					<description>Linux framebuffer driver for 16Z044</description>
-					<type>Native Driver</type>
-					<makefilepath>DRIVERS/FB_16Z044/DRIVER/driver.mak</makefilepath>
-					<os>Linux</os>
-				</swmodule>
-				<swmodule>
-					<name>men_lx_chameleon</name>
-					<description>Linux native chameleon driver</description>
-					<type>Native Driver</type>
-					<makefilepath>DRIVERS/CHAMELEON/driver.mak</makefilepath>
-					<os>Linux</os>
-				</swmodule>
-			</swmodulelist>
 		</model>
 	</modellist>
+	<swmodulelist>
+		<swmodule>
+			<name>men_lx_z44</name>
+			<description>Linux framebuffer driver for 16Z044</description>
+			<type>Native Driver</type>
+			<makefilepath>DRIVERS/FB_16Z044/DRIVER/driver.mak</makefilepath>
+			<os>Linux</os>
+		</swmodule>
+		<swmodule>
+			<name>men_lx_chameleon</name>
+			<description>Linux native chameleon driver</description>
+			<type>Native Driver</type>
+			<makefilepath>DRIVERS/CHAMELEON/driver.mak</makefilepath>
+			<os>Linux</os>
+		</swmodule>
+		<swmodule>
+			<name>Z044_Test</name>
+			<description>Control Z044 settings</description>
+			<type>Native Tool</type>
+			<makefilepath>DRIVERS/FB_16Z044/TOOLS/Z44_IOCTL_TEST/program.mak</makefilepath>
+		</swmodule>
+		<swmodule>
+			<name>Z044_256x64_Test</name>
+			<description>Set various images to 256x64 display</description>
+			<type>Native Tool</type>
+			<makefilepath>DRIVERS/FB_16Z044/TOOLS/Z44_256X64_TEST/program.mak</makefilepath>
+		</swmodule>
+	</swmodulelist>
 </package>
