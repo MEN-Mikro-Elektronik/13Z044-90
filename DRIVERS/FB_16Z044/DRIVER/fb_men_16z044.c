@@ -45,11 +45,8 @@
 #include <linux/platform_device.h>
 #include <linux/delay.h>
 #include <asm/io.h>
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4,12,0)
-#include <asm/uaccess.h> 			/* copy_to/from_user */
-#else
 #include <linux/uaccess.h> 			/* copy_to/from_user */
-#endif
+
 #include <MEN/fb_men_16z044.h>		/* public ioctls 	*/
 #include <MEN/men_chameleon.h>
 #include <MEN/16z044_disp.h>
